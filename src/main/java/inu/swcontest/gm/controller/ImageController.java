@@ -1,7 +1,7 @@
 package inu.swcontest.gm.controller;
 
 
-import inu.swcontest.gm.Service.ImageService;
+import inu.swcontest.gm.service.ImageService;
 import inu.swcontest.gm.model.UploadImageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
