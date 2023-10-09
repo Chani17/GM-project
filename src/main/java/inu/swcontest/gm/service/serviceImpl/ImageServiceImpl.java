@@ -1,5 +1,6 @@
 package inu.swcontest.gm.service.serviceImpl;
 
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
@@ -19,8 +20,9 @@ public class ImageServiceImpl implements ImageService {
 
     @Value("${spring.cloud.gcp.storage.bucket}")
     private String bucketName;
+
     @Override
-    public void uploadImage(UploadImageRequest request) {
+    public String uploadImage(UploadImageRequest request) {
         // GCP storage client 초기화
         Storage storage = StorageOptions.getDefaultInstance().getService();
 
@@ -37,11 +39,16 @@ public class ImageServiceImpl implements ImageService {
             BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, name).setContentType(contentType).build();
 
             // Cloud에 이미지 업로드
-            storage.createFrom(blobInfo, request.getImage().getInputStream());
+            Blob uploadImage = storage.createFrom(blobInfo, request.getImage().getInputStream());
+
+            // 해당 image url return
+            String imageUrl = uploadImage.getMediaLink();
+
+            return imageUrl;
 
         } catch (IOException e) {
             e.printStackTrace();
+            return e.getMessage();
         }
-
     }
 }

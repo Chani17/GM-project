@@ -19,7 +19,7 @@ public class ImageController {
     // upload origin image
     @PostMapping("/upload/image")
     public ResponseEntity uploadImage(UploadImageRequest uploadImageRequest) {
-        imageService.uploadImage(uploadImageRequest);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        String imageUrl = imageService.uploadImage(uploadImageRequest);
+        return ResponseEntity.ok(imageUrl);
     }
 }
