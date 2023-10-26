@@ -32,60 +32,68 @@ public class ImageServiceImpl implements ImageService {
     @Value("${spring.cloud.gcp.storage.bucket}")
     private String bucketName;
 
-    private String url;
+    // model server url
+    private String url = "http://127.0.0.1:8080/";
 
     @Override
-    public String uploadImage(List<MultipartFile> images) {
+    public void uploadImage(MultipartFile zipFile) {
         // GCP storage client 초기화
         Storage storage = StorageOptions.getDefaultInstance().getService();
 
-        for(MultipartFile image: images) {
             // GCS에 저장될 파일 이름 UUID로 지정
             // 이미지 이름 foramt : gm-{originName}-{uuid}
-            String originName = image.getOriginalFilename();
+            String originName = zipFile.getOriginalFilename();
             String name = "gm-" + originName + "-" + UUID.randomUUID();
 
             // 파일 확장자(형식) ex) PNG
-            String contentType = image.getContentType();
+            String contentType = zipFile.getContentType();
 
             // 이미지 정보 설정
             try {
                 BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, name).setContentType(contentType).build();
 
                 // Cloud에 이미지 업로드
-                Blob uploadImage = storage.createFrom(blobInfo, image.getInputStream());
+                Blob uploadImage = storage.createFrom(blobInfo, zipFile.getInputStream());
 
                 // 해당 image url return
-                url = uploadImage.getMediaLink();
+                uploadImage.getMediaLink();
+
+                // send zipFile to model server
+                sendImage(zipFile);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        return url;
     }
 
     @Override
-    public ZipFile sendImage(String imageUrl) {
-
+    public void sendImage(MultipartFile zipFile) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://127.0.0.1:8080/";
 
         // header
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Content-Type", "application/zip");
 
         // body
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("imageUrl", imageUrl);
+        MultiValueMap<String, MultipartFile> body = new LinkedMultiValueMap<>();
+        body.add("zipFile", zipFile);
 
         // message
-        HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, headers);
+        HttpEntity<MultiValueMap<String, MultipartFile>> requestMessage = new HttpEntity<>(body, headers);
 
         // request
-        ZipFileResponse zipFileResponse = restTemplate.postForObject(url, requestMessage, ZipFileResponse.class);
+        restTemplate.postForObject(url, requestMessage, ZipFileResponse.class);
 
-        return zipFileResponse.getZipFile();
+    }
 
+    // return image zip file from model server
+    @Override
+    public ZipFileResponse returnZipFile(ZipFile zipFile) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        ZipFileResponse response = restTemplate.getForObject(url, ZipFileResponse.class, zipFile);
+        System.out.println("response = " + response.toString());
+
+        return response;
     }
 }
