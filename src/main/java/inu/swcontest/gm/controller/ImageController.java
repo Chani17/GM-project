@@ -20,7 +20,7 @@ public class ImageController {
 
     // upload origin image
     @PostMapping("/upload/image")
-    public ResponseEntity<String> uploadImage(@RequestParam("zipFile") MultipartFile zipFile) {
+    public ResponseEntity<String> uploadImage(@RequestParam("zip") MultipartFile zipFile) {
         System.out.println("uploadImageRequest.getImage().getName() = " + zipFile.getName());
         imageService.uploadImage(zipFile);
         return ResponseEntity.ok("이미지 저장 및 전송 완료");
@@ -30,7 +30,7 @@ public class ImageController {
     // get zip file from model server
     // this part need a test
     @GetMapping("/return/zipFile")
-    public ZipFileResponse getZipFile(ZipFile zipFile) {
+    public ZipFileResponse getZipFile(MultipartFile zipFile) {
         ZipFileResponse zipFileResponse = imageService.returnZipFile(zipFile);
         return zipFileResponse;
     }

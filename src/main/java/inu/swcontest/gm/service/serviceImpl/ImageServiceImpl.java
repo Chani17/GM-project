@@ -6,9 +6,9 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import inu.swcontest.gm.model.ZipFileResponse;
 import inu.swcontest.gm.service.ImageService;
-import inu.swcontest.gm.model.UploadImageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,8 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipFile;
 
@@ -33,7 +31,7 @@ public class ImageServiceImpl implements ImageService {
     private String bucketName;
 
     // model server url
-    private String url = "http://127.0.0.1:8080/";
+    private String url = "http://127.0.0.1:8000/";
 
     @Override
     public void uploadImage(MultipartFile zipFile) {
@@ -59,7 +57,7 @@ public class ImageServiceImpl implements ImageService {
                 uploadImage.getMediaLink();
 
                 // send zipFile to model server
-                sendImage(zipFile);
+                sendZipFile(zipFile);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -67,28 +65,35 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void sendImage(MultipartFile zipFile) {
+    public void sendZipFile(MultipartFile zipFile) throws IOException {
+
         RestTemplate restTemplate = new RestTemplate();
 
         // header
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/zip");
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         // body
-        MultiValueMap<String, MultipartFile> body = new LinkedMultiValueMap<>();
-        body.add("zipFile", zipFile);
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        ByteArrayResource resource = new ByteArrayResource(zipFile.getBytes()){
+            @Override
+            public String getFilename() {
+                return zipFile.getOriginalFilename();
+            }
+        };
+        body.add("zipFile", resource);
 
         // message
-        HttpEntity<MultiValueMap<String, MultipartFile>> requestMessage = new HttpEntity<>(body, headers);
+        HttpEntity<MultiValueMap<String, Object>> requestMessage = new HttpEntity<>(body, headers);
 
         // request
-        restTemplate.postForObject(url, requestMessage, ZipFileResponse.class);
+        restTemplate.postForObject(url + "get/url", requestMessage, ZipFileResponse.class);
 
     }
 
     // return image zip file from model server
     @Override
-    public ZipFileResponse returnZipFile(ZipFile zipFile) {
+    public ZipFileResponse returnZipFile(MultipartFile zipFile) {
         RestTemplate restTemplate = new RestTemplate();
 
         ZipFileResponse response = restTemplate.getForObject(url, ZipFileResponse.class, zipFile);
