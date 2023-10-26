@@ -6,13 +6,15 @@ import inu.swcontest.gm.model.UploadImageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 
+@CrossOrigin("http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
 public class ImageController {
@@ -21,10 +23,12 @@ public class ImageController {
 
     // upload origin image
     @PostMapping("/upload/image")
-    public ResponseEntity uploadImage(UploadImageRequest uploadImageRequest) {
-        String imageUrl = imageService.uploadImage(uploadImageRequest);
-        return ResponseEntity.ok(imageUrl);
+    public List<String> uploadImage(@RequestParam("image") List<MultipartFile> image) {
+        System.out.println("uploadImageRequest.getImage().getName() = " + image.stream().collect(Collectors.toList()));
+        List<String> imageUrl = imageService.uploadImage(image);
+        return imageUrl;
     }
+
 
     // get zip file from model server
     // this part need a test

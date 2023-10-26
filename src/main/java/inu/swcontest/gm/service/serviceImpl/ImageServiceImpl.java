@@ -16,8 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipFile;
 
@@ -29,35 +32,37 @@ public class ImageServiceImpl implements ImageService {
     @Value("${spring.cloud.gcp.storage.bucket}")
     private String bucketName;
 
+    private String url;
+
     @Override
-    public String uploadImage(UploadImageRequest request) {
+    public String uploadImage(List<MultipartFile> images) {
         // GCP storage client 초기화
         Storage storage = StorageOptions.getDefaultInstance().getService();
 
-        // GCS에 저장될 파일 이름 UUID로 지정
-        // 이미지 이름 foramt : gm-{originName}-{uuid}
-        String originName = request.getImage().getOriginalFilename();
-        String name = "gm-" + originName + "-" + UUID.randomUUID();
+        for(MultipartFile image: images) {
+            // GCS에 저장될 파일 이름 UUID로 지정
+            // 이미지 이름 foramt : gm-{originName}-{uuid}
+            String originName = image.getOriginalFilename();
+            String name = "gm-" + originName + "-" + UUID.randomUUID();
 
-        // 파일 확장자(형식) ex) PNG
-        String contentType = request.getImage().getContentType();
+            // 파일 확장자(형식) ex) PNG
+            String contentType = image.getContentType();
 
-        // 이미지 정보 설정
-        try {
-            BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, name).setContentType(contentType).build();
+            // 이미지 정보 설정
+            try {
+                BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, name).setContentType(contentType).build();
 
-            // Cloud에 이미지 업로드
-            Blob uploadImage = storage.createFrom(blobInfo, request.getImage().getInputStream());
+                // Cloud에 이미지 업로드
+                Blob uploadImage = storage.createFrom(blobInfo, image.getInputStream());
 
-            // 해당 image url return
-            String imageUrl = uploadImage.getMediaLink();
+                // 해당 image url return
+                url = uploadImage.getMediaLink();
 
-            return imageUrl;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return e.getMessage();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        return url;
     }
 
     @Override
