@@ -19,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipFile;
 
@@ -54,10 +56,10 @@ public class ImageServiceImpl implements ImageService {
                 Blob uploadImage = storage.createFrom(blobInfo, zipFile.getInputStream());
 
                 // 해당 image url return
-                uploadImage.getMediaLink();
+                String zipUrl = uploadImage.getMediaLink();
 
                 // send zipFile to model server
-                sendZipFile(zipFile);
+                sendZipFile(zipUrl);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -65,30 +67,22 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void sendZipFile(MultipartFile zipFile) throws IOException {
-
+    public void sendZipFile(String zipUrl) {
         RestTemplate restTemplate = new RestTemplate();
 
         // header
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
         // body
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        ByteArrayResource resource = new ByteArrayResource(zipFile.getBytes()){
-            @Override
-            public String getFilename() {
-                return zipFile.getOriginalFilename();
-            }
-        };
-        body.add("zipFile", resource);
+        Map<String, String> body = new HashMap<>();
+        body.put("zip", zipUrl);
 
         // message
-        HttpEntity<MultiValueMap<String, Object>> requestMessage = new HttpEntity<>(body, headers);
+        HttpEntity<Map<String, String>> requestMessage = new HttpEntity<>(body, headers);
 
         // request
-        restTemplate.postForObject(url + "get/url", requestMessage, ZipFileResponse.class);
-
+        restTemplate.getForObject(url + "get/url", void.class, requestMessage);
     }
 
     // return image zip file from model server

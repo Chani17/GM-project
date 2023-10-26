@@ -9,7 +9,7 @@ import java.util.zip.ZipFile;
 public interface ImageService {
     void uploadImage(MultipartFile zipFile);
 
-    void sendZipFile(MultipartFile zipFile) throws IOException;
+    void sendZipFile(String zipFile) throws IOException;
 
     ZipFileResponse returnZipFile(MultipartFile zipFile);
 }
