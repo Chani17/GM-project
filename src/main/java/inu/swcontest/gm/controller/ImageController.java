@@ -34,4 +34,5 @@ public class ImageController {
         ZipFileResponse zipFileResponse = imageService.returnZipFile(zipFile);
         return zipFileResponse;
     }
+
 }

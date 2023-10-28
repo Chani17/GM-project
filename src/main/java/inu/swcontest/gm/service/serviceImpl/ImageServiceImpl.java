@@ -33,8 +33,7 @@ public class ImageServiceImpl implements ImageService {
     private String bucketName;
 
     // model server url
-    private String url = "http://127.0.0.1:8000/";
-
+    private String url = "http://127.0.0.1:5000/";
     @Override
     public void uploadImage(MultipartFile zipFile) {
         // GCP storage client 초기화
@@ -82,7 +81,8 @@ public class ImageServiceImpl implements ImageService {
         HttpEntity<Map<String, String>> requestMessage = new HttpEntity<>(body, headers);
 
         // request
-        restTemplate.getForObject(url + "get/url", void.class, requestMessage);
+        restTemplate.postForObject(url + "get/url", requestMessage, void.class);
+
     }
 
     // return image zip file from model server
