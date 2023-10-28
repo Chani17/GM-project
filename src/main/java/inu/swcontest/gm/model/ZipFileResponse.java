@@ -2,11 +2,11 @@ package inu.swcontest.gm.model;
 
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.zip.ZipFile;
 
 @Data
 public class ZipFileResponse {
 
-    private ZipFile zipFile;
+    private MultipartFile zipFile;
 }
