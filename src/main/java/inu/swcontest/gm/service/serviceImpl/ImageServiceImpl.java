@@ -4,25 +4,21 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import inu.swcontest.gm.model.ZipFileResponse;
 import inu.swcontest.gm.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.zip.ZipFile;
 
 
 @Service
@@ -31,6 +27,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Value("${spring.cloud.gcp.storage.bucket}")
     private String bucketName;
+
 
     // model server url
     private String url = "http://127.0.0.1:5000/";
@@ -87,12 +84,18 @@ public class ImageServiceImpl implements ImageService {
 
     // return image zip file from model server
     @Override
-    public ZipFileResponse returnZipFile(MultipartFile zipFile) {
-        RestTemplate restTemplate = new RestTemplate();
+    public String returnZipFile(MultipartFile zipFile, List<Float> accuracy) {
 
-        ZipFileResponse response = restTemplate.getForObject(url, ZipFileResponse.class, zipFile);
-        System.out.println("response = " + response.toString());
+        System.out.println("returnZipFile service 들어옴");
 
-        return response;
+        System.out.println("response.getZipFile().getOriginalFilename() = " + zipFile.getOriginalFilename());
+
+        for(Float a : accuracy) {
+            System.out.println("accuracy = " + a.toString());
+        }
+
+        return zipFile.getOriginalFilename();
     }
+
+
 }

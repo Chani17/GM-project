@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.zip.ZipFile;
 
 
@@ -28,11 +29,12 @@ public class ImageController {
 
 
     // get zip file from model server
-    // this part need a test
-    @GetMapping("/return/zipFile")
-    public ZipFileResponse getZipFile(MultipartFile zipFile) {
-        ZipFileResponse zipFileResponse = imageService.returnZipFile(zipFile);
+    @PostMapping("/return/zipFile")
+    public String getZipFile(@RequestParam("zipFile") MultipartFile zipFile, @RequestParam("accuracy") List<Float> accuracy) {
+        System.out.println("getZipFile controller 들어옴");
+        String zipFileResponse = imageService.returnZipFile(zipFile, accuracy);
         return zipFileResponse;
     }
+
 
 }
