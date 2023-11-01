@@ -5,6 +5,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import inu.swcontest.gm.service.ImageService;
+import inu.swcontest.gm.service.ZipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -32,14 +33,14 @@ public class ImageServiceImpl implements ImageService {
     // model server url
     private String url = "http://127.0.0.1:5000/";
     @Override
-    public void uploadImage(MultipartFile zipFile) {
+    public void uploadImage(String email, MultipartFile zipFile) {
         // GCP storage client 초기화
         Storage storage = StorageOptions.getDefaultInstance().getService();
 
             // GCS에 저장될 파일 이름 UUID로 지정
-            // 이미지 이름 foramt : gm-{originName}-{uuid}
+            // 이미지 이름 foramt : gm-original-{originName}-{uuid}
             String originName = zipFile.getOriginalFilename();
-            String name = "gm-" + originName + "-" + UUID.randomUUID();
+            String name = "gm-original-" + originName + "-" + UUID.randomUUID();
 
             // 파일 확장자(형식) ex) PNG
             String contentType = zipFile.getContentType();
@@ -55,7 +56,7 @@ public class ImageServiceImpl implements ImageService {
                 String zipUrl = uploadImage.getMediaLink();
 
                 // send zipFile to model server
-                sendZipFile(zipUrl);
+                sendZipFile(email, zipUrl);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -63,7 +64,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void sendZipFile(String zipUrl) {
+    public void sendZipFile(String email, String zipUrl) {
         RestTemplate restTemplate = new RestTemplate();
 
         // header
@@ -72,6 +73,7 @@ public class ImageServiceImpl implements ImageService {
 
         // body
         Map<String, String> body = new HashMap<>();
+        body.put("email", email);
         body.put("zip", zipUrl);
 
         // message
@@ -82,20 +84,7 @@ public class ImageServiceImpl implements ImageService {
 
     }
 
-    // return image zip file from model server
-    @Override
-    public String returnZipFile(MultipartFile zipFile, List<Float> accuracy) {
 
-        System.out.println("returnZipFile service 들어옴");
-
-        System.out.println("response.getZipFile().getOriginalFilename() = " + zipFile.getOriginalFilename());
-
-        for(Float a : accuracy) {
-            System.out.println("accuracy = " + a.toString());
-        }
-
-        return zipFile.getOriginalFilename();
-    }
 
 
 }

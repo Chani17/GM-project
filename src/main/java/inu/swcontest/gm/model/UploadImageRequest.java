@@ -8,5 +8,7 @@ import java.util.List;
 @Data
 public class UploadImageRequest {
 
+    private String email;
+
     private MultipartFile image;
 }
