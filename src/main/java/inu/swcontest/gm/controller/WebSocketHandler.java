@@ -6,12 +6,18 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
 
+    private static final ConcurrentHashMap<String, WebSocketSession> CLIENTS = new ConcurrentHashMap<>();
+
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        super.handleTextMessage(session, message);
+        System.out.println("handleTextMessage 들어옴!");
+        System.out.println("message = " + message.getPayload());
+        CLIENTS.get(session.getId()).sendMessage(message);
     }
 
     /**
@@ -22,6 +28,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         System.out.println(session.getId() + " 연결 됨");
+        CLIENTS.put(session.getId(), session);
     }
 
     /**
@@ -34,6 +41,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         System.out.println(session.getId() + " 연결 끊김");
-        System.out.println("status.getReason() = " + status.getReason());
+        CLIENTS.remove(session.getId());
     }
 }

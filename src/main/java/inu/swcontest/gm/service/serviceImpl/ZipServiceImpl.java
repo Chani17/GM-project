@@ -6,7 +6,6 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import inu.swcontest.gm.entity.Member;
 import inu.swcontest.gm.entity.Zip;
-import inu.swcontest.gm.model.ZipFileResponse;
 import inu.swcontest.gm.repository.MemberRepository;
 import inu.swcontest.gm.repository.ZipRepository;
 import inu.swcontest.gm.service.ZipService;
@@ -82,7 +81,7 @@ public class ZipServiceImpl implements ZipService {
         memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다."));
 
-        List<Zip> response = zipRepository.findAllByEmail(email);
+        List<Zip> response = zipRepository.findByMemberEmail(email);
 
         return response;
     }
