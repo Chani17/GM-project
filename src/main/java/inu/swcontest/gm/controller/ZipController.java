@@ -1,6 +1,7 @@
 package inu.swcontest.gm.controller;
 
 import inu.swcontest.gm.entity.Zip;
+import inu.swcontest.gm.model.DashboardResponse;
 import inu.swcontest.gm.model.ZipFileResponse;
 import inu.swcontest.gm.service.ZipService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,8 @@ public class ZipController {
 
     // get zip file, accuracy list for rendering
     @GetMapping("/zips/{email}")
-    public List<Zip> getData(@PathVariable String email) {
-        List<Zip> response = zipService.getData(email);
+    public List<DashboardResponse> getData(@PathVariable String email) {
+        List<DashboardResponse> response = zipService.getData(email);
         return response;
     }
 }
