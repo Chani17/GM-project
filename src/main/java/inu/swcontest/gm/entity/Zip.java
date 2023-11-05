@@ -34,7 +34,7 @@ public class Zip {
     private String createdDate;
 
     @ManyToOne
-    @JoinColumn(name = "email")
+    @JoinColumn(name = "member_email")
     private Member member;
 
 

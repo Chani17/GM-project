@@ -4,10 +4,8 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import inu.swcontest.gm.entity.Member;
 import inu.swcontest.gm.repository.MemberRepository;
 import inu.swcontest.gm.service.ImageService;
-import inu.swcontest.gm.service.ZipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -19,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -33,9 +30,9 @@ public class ImageServiceImpl implements ImageService {
 
     private final MemberRepository memberRepository;
 
-
     // model server url
-    private String url = "http://127.0.0.1:5000/";
+    private static final String URL = "http://127.0.0.1:5000/";
+
     @Override
     public void uploadImage(String email, String projectName, MultipartFile zipFile) {
 
@@ -90,7 +87,7 @@ public class ImageServiceImpl implements ImageService {
         HttpEntity<Map<String, String>> requestMessage = new HttpEntity<>(body, headers);
 
         // request
-        restTemplate.postForObject(url + "get/url", requestMessage, void.class);
+        restTemplate.postForObject(URL + "get/url", requestMessage, void.class);
 
     }
 
