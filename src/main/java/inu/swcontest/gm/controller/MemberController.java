@@ -17,12 +17,14 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    // join
     @PostMapping()
     public ResponseEntity addMember(@RequestBody AddMemberRequest addMemberRequest) {
         memberService.addMember(addMemberRequest);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    // login
     @PostMapping("/login")
     public Member loginMember(@RequestBody LoginMemberRequest loginMemberRequest) {
         Member member = memberService.loginMember(loginMemberRequest);

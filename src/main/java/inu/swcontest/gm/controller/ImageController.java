@@ -19,7 +19,7 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    // upload origin image
+    // upload origin zipFile
     @PostMapping("/upload/images/{email}")
     public ResponseEntity<String> uploadImage(@PathVariable String email, @RequestParam("zip") MultipartFile zipFile) {
         imageService.uploadImage(email, zipFile);
