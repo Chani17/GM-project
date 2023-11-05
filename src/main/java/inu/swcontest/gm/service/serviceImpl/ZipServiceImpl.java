@@ -60,7 +60,7 @@ public class ZipServiceImpl implements ZipService {
 
     // return image zip file from model server
     @Override
-    public void returnZipFile(MultipartFile zipFile, List<Float> accuracy, String email) {
+    public void returnZipFile(MultipartFile zipFile, List<Float> accuracy, String email, String projectName) {
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다."));
@@ -68,7 +68,7 @@ public class ZipServiceImpl implements ZipService {
         // upload file to GCS
         String url = saveZipFile(zipFile);
 
-        Zip zip = Zip.createZip(url, accuracy.get(0), accuracy.get(1), accuracy.get(2), member);
+        Zip zip = Zip.createZip(url, projectName, accuracy.get(0), accuracy.get(1), accuracy.get(2), member);
 
         // save zipUrl to DB
         zipRepository.save(zip);

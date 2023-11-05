@@ -10,7 +10,7 @@ import java.util.List;
 public interface ZipService {
     String saveZipFile(MultipartFile zipFile);
 
-    void returnZipFile(MultipartFile zipFile, List<Float> accuracy, String email);
+    void returnZipFile(MultipartFile zipFile, List<Float> accuracy, String email, String projectName);
 
     List<Zip> getData(String email);
 }

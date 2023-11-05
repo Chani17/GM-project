@@ -16,6 +16,8 @@ public class Zip {
     @Column(name = "zip_seq")
     private Long id;
 
+    private String projectName;
+
     private String zipUrl;
 
     private Float accuracy;
@@ -31,9 +33,10 @@ public class Zip {
     private Member member;
 
 
-    public static Zip createZip(String zipUrl, Float accuracy, Float LPIPS, Float fid, Member member) {
+    public static Zip createZip(String zipUrl, String projectName, Float accuracy, Float LPIPS, Float fid, Member member) {
         Zip zip = new Zip();
         zip.zipUrl = zipUrl;
+        zip.projectName = projectName;
         zip.accuracy = accuracy;
         zip.LPIPS = LPIPS;
         zip.fid = fid;
