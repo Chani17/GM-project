@@ -6,6 +6,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -28,8 +31,10 @@ public class Zip {
     // fidelity
     private Float fid;
 
+    private String createdDate;
+
     @ManyToOne
-    @JoinColumn(name = "member_email")
+    @JoinColumn(name = "email")
     private Member member;
 
 
@@ -40,6 +45,7 @@ public class Zip {
         zip.accuracy = accuracy;
         zip.LPIPS = LPIPS;
         zip.fid = fid;
+        zip.createdDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
         zip.member = member;
         return zip;
     }
