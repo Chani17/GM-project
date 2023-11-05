@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.zip.ZipFile;
 
 public interface ImageService {
-    void uploadImage(String email, MultipartFile zipFile);
+    void uploadImage(String email, String projectName, MultipartFile zipFile);
 
-    void sendZipFile(String email, String zipFile) throws IOException;
+    void sendZipFile(String email, String projectName, String zipFile) throws IOException;
 
 }

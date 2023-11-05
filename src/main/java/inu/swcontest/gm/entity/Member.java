@@ -1,6 +1,7 @@
 package inu.swcontest.gm.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,12 +16,13 @@ import java.util.List;
 public class Member {
 
     @Id
-    @Column(name = "member_email", nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "member_pw", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "member")
     private List<Zip> zipList = new ArrayList<>();
 

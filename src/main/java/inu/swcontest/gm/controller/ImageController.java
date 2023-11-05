@@ -21,8 +21,8 @@ public class ImageController {
 
     // upload origin zipFile
     @PostMapping("/upload/images/{email}")
-    public ResponseEntity<String> uploadImage(@PathVariable String email, @RequestParam("zip") MultipartFile zipFile) {
-        imageService.uploadImage(email, zipFile);
+    public ResponseEntity<String> uploadImage(@PathVariable String email, String projectName, @RequestParam("zip") MultipartFile zipFile) {
+        imageService.uploadImage(email, projectName, zipFile);
         return ResponseEntity.ok("이미지 저장 및 전송 완료");
     }
 

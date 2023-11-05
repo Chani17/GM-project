@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-
+@CrossOrigin("http://localhost:3000")
 public class ZipController {
 
     private final ZipService zipService;
