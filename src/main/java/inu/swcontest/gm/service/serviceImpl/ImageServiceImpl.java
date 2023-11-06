@@ -4,8 +4,8 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import inu.swcontest.gm.repository.MemberRepository;
 import inu.swcontest.gm.service.ImageService;
-import inu.swcontest.gm.service.ZipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,11 +28,18 @@ public class ImageServiceImpl implements ImageService {
     @Value("${spring.cloud.gcp.storage.bucket}")
     private String bucketName;
 
+    private final MemberRepository memberRepository;
 
     // model server url
-    private String url = "http://127.0.0.1:5000/";
+    private static final String URL = "http://127.0.0.1:5000/";
+
     @Override
-    public void uploadImage(String email, MultipartFile zipFile) {
+    public void uploadImage(String email, String projectName, MultipartFile zipFile) {
+
+        // member 로그인 확인하는 logic 필요함
+        memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("가입되어 있지 않은 회원입니다."));
+
         // GCP storage client 초기화
         Storage storage = StorageOptions.getDefaultInstance().getService();
 
@@ -56,7 +62,7 @@ public class ImageServiceImpl implements ImageService {
                 String zipUrl = uploadImage.getMediaLink();
 
                 // send zipFile to model server
-                sendZipFile(email, zipUrl);
+                sendZipFile(email, projectName, zipUrl);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -64,7 +70,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void sendZipFile(String email, String zipUrl) {
+    public void sendZipFile(String email, String projectName, String zipUrl) {
         RestTemplate restTemplate = new RestTemplate();
 
         // header
@@ -74,13 +80,14 @@ public class ImageServiceImpl implements ImageService {
         // body
         Map<String, String> body = new HashMap<>();
         body.put("email", email);
-        body.put("zip", zipUrl);
+        body.put("projectName", projectName);
+        body.put("zipUrl", zipUrl);
 
         // message
         HttpEntity<Map<String, String>> requestMessage = new HttpEntity<>(body, headers);
 
         // request
-        restTemplate.postForObject(url + "get/url", requestMessage, void.class);
+        restTemplate.postForObject(URL + "get/url", requestMessage, void.class);
 
     }
 

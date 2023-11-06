@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ZipRepository extends JpaRepository<Zip, Long> {
-    List<Zip> findAllByEmail(String email);
+    List<Zip> findByMemberEmail(String email);
 }

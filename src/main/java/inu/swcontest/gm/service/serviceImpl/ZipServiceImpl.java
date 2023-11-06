@@ -6,7 +6,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import inu.swcontest.gm.entity.Member;
 import inu.swcontest.gm.entity.Zip;
-import inu.swcontest.gm.model.ZipFileResponse;
+import inu.swcontest.gm.model.DashboardResponse;
 import inu.swcontest.gm.repository.MemberRepository;
 import inu.swcontest.gm.repository.ZipRepository;
 import inu.swcontest.gm.service.ZipService;
@@ -16,8 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -61,7 +63,7 @@ public class ZipServiceImpl implements ZipService {
 
     // return image zip file from model server
     @Override
-    public void returnZipFile(MultipartFile zipFile, List<Float> accuracy, String email) {
+    public void returnZipFile(MultipartFile zipFile, List<Float> accuracy, String email, String projectName) {
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다."));
@@ -69,7 +71,7 @@ public class ZipServiceImpl implements ZipService {
         // upload file to GCS
         String url = saveZipFile(zipFile);
 
-        Zip zip = Zip.createZip(url, accuracy.get(0), accuracy.get(1), accuracy.get(2), member);
+        Zip zip = Zip.createZip(url, projectName, accuracy.get(0), accuracy.get(1), accuracy.get(2), member);
 
         // save zipUrl to DB
         zipRepository.save(zip);
@@ -78,11 +80,17 @@ public class ZipServiceImpl implements ZipService {
 
 
     @Override
-    public List<Zip> getData(String email) {
+    public List<DashboardResponse> getData(String email) {
         memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다."));
 
-        List<Zip> response = zipRepository.findAllByEmail(email);
+        List<DashboardResponse> response = new ArrayList<>();
+        List<Zip> result = zipRepository.findByMemberEmail(email);
+
+        for(Zip zip : result) {
+            DashboardResponse dashboardResponse = DashboardResponse.dashboardResponse(zip.getMember().getEmail(), zip.getProjectName(), zip.getZipUrl(), zip.getAccuracy(), zip.getLPIPS(), zip.getFid(), zip.getCreatedDate());
+            response.add(dashboardResponse);
+        }
 
         return response;
     }
