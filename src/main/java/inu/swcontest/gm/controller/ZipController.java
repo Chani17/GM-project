@@ -21,8 +21,16 @@ public class ZipController {
 
     // get zip file from model server
     @PostMapping("/zips")
-    public ResponseEntity getZipFile(@RequestParam("zipFile") MultipartFile zipFile, @RequestParam("accuracy") List<Float> accuracy, String email, String projectName) {
-        zipService.returnZipFile(zipFile, accuracy, email, projectName);
+    public ResponseEntity getZipFile(@RequestParam("zipFile") MultipartFile zipFile,
+                                     @RequestParam("accuracy_generated") List<Float> accuracy_generated,
+                                     @RequestParam("accuracy_original_generated") List<Float> accuracy_original_generated,
+                                     @RequestParam("LPIPS") List<Float> LPIPS,
+                                     @RequestParam("fid") List<Float> fid,
+                                     @RequestParam("loss") MultipartFile loss,
+                                     @RequestParam("generated_gif") MultipartFile generated_gif,
+                                     @RequestParam("generated_single_img") MultipartFile generated_single_img,
+                                     String email, String projectName) {
+        zipService.returnZipFile(zipFile, accuracy_generated, accuracy_original_generated, LPIPS, fid, loss, generated_gif, generated_single_img, email, projectName);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -34,7 +33,7 @@ public class ZipServiceImpl implements ZipService {
     private static String zipUrl;
 
     @Override
-    public String saveZipFile(MultipartFile zipFile) {
+    public String saveFile(MultipartFile zipFile) {
         // GCP storage client 초기화
         Storage storage = StorageOptions.getDefaultInstance().getService();
 
@@ -63,15 +62,20 @@ public class ZipServiceImpl implements ZipService {
 
     // return image zip file from model server
     @Override
-    public void returnZipFile(MultipartFile zipFile, List<Float> accuracy, String email, String projectName) {
+    public void returnZipFile(MultipartFile zipFile, List<Float> accuracy_generated, List<Float> accuracy_original_generated,
+                              List<Float> LPIPS, List<Float> fid, MultipartFile loss,
+                              MultipartFile generated_gif, MultipartFile generated_single_img, String email, String projectName) {
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다."));
 
         // upload file to GCS
-        String url = saveZipFile(zipFile);
+        String url = saveFile(zipFile);
+        String loss_url = saveFile(loss);
+        String generated_gif_url = saveFile(generated_gif);
+        String generated_single_img_url = saveFile(generated_single_img);
 
-        Zip zip = Zip.createZip(url, projectName, accuracy.get(0), accuracy.get(1), accuracy.get(2), member);
+        Zip zip = Zip.createZip(url, projectName, accuracy_generated, accuracy_original_generated, LPIPS, fid, loss_url, generated_gif_url, generated_single_img_url, member);
 
         // save zipUrl to DB
         zipRepository.save(zip);
@@ -88,7 +92,9 @@ public class ZipServiceImpl implements ZipService {
         List<Zip> result = zipRepository.findByMemberEmail(email);
 
         for(Zip zip : result) {
-            DashboardResponse dashboardResponse = DashboardResponse.dashboardResponse(zip.getMember().getEmail(), zip.getProjectName(), zip.getZipUrl(), zip.getAccuracy(), zip.getLPIPS(), zip.getFid(), zip.getCreatedDate());
+            DashboardResponse dashboardResponse = DashboardResponse.dashboardResponse(zip.getMember().getEmail(), zip.getProjectName(),
+                    zip.getZipUrl(), zip.getAccuracy_generated(), zip.getAccuracy_original_generated(),
+                    zip.getLPIPS(), zip.getFid(), zip.getLoss(), zip.getGenerated_gif_url(), zip.getGenerated_single_img(), zip.getCreatedDate());
             response.add(dashboardResponse);
         }
 

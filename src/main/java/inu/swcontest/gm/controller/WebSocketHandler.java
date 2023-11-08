@@ -15,7 +15,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        System.out.println("handleTextMessage 들어옴!");
         System.out.println("message = " + message.getPayload());
         CLIENTS.get(session.getId()).sendMessage(message);
     }
