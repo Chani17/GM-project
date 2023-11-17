@@ -4,6 +4,8 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import inu.swcontest.gm.entity.Member;
+import inu.swcontest.gm.entity.MemberStatus;
 import inu.swcontest.gm.repository.MemberRepository;
 import inu.swcontest.gm.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -31,14 +33,17 @@ public class ImageServiceImpl implements ImageService {
     private final MemberRepository memberRepository;
 
     // model server url
-    private static final String URL = "http://127.0.0.1:5000/";
+    private static final String URL = "http://192.168.18.173:5000/";
 
     @Override
     public void uploadImage(String email, String projectName, MultipartFile zipFile) {
 
         // member 로그인 확인하는 logic 필요함
-        memberRepository.findByEmail(email)
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("가입되어 있지 않은 회원입니다."));
+
+        // update member status -> GENERATING
+        member.updateMemberStatus();
 
         // GCP storage client 초기화
         Storage storage = StorageOptions.getDefaultInstance().getService();

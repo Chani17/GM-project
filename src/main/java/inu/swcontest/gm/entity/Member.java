@@ -22,6 +22,10 @@ public class Member {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private MemberStatus status;
+
     @JsonIgnore
     @OneToMany(mappedBy = "member")
     private List<Zip> zipList = new ArrayList<>();
@@ -30,7 +34,12 @@ public class Member {
         Member member = new Member();
         member.email = email;
         member.password = password;
+        member.status = MemberStatus.COMPLETE;
         return member;
+    }
+
+    public void updateMemberStatus() {
+        this.status = MemberStatus.GENERATING;
     }
 
 }
