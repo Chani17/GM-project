@@ -6,6 +6,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,10 +15,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketHandler extends TextWebSocketHandler {
 
     private static final ConcurrentHashMap<String, WebSocketSession> CLIENTS = new ConcurrentHashMap<>();
+    private static final String lastMessage = "";
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        System.out.println("received = " + message.getPayload() + " : " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
+        String payload = message.getPayload();
+        System.out.println("received = " + payload + " : " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
         CLIENTS.get(session.getId()).sendMessage(message);
     }
 
@@ -43,5 +46,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         System.out.println(session.getId() + " 연결 끊김");
         CLIENTS.remove(session.getId());
+    }
+
+    public static String getLastMessage() {
+        System.out.println("CLIENTS = " + CLIENTS);
+        System.out.println("lastMessage = " + lastMessage);
+        return lastMessage;
     }
 }

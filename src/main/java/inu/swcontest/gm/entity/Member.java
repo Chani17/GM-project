@@ -34,12 +34,12 @@ public class Member {
         Member member = new Member();
         member.email = email;
         member.password = password;
-        member.status = MemberStatus.COMPLETE;
+        member.status = MemberStatus.complete;
         return member;
     }
 
     public void updateMemberStatus() {
-        this.status = MemberStatus.GENERATING;
+        this.status = MemberStatus.generating;
     }
 
 }
