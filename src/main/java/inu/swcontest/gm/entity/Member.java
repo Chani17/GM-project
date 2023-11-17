@@ -38,8 +38,8 @@ public class Member {
         return member;
     }
 
-    public void updateMemberStatus() {
-        this.status = MemberStatus.generating;
+    public void updateMemberStatus(MemberStatus status) {
+        this.status = status;
     }
 
 }

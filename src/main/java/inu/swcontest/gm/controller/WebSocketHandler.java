@@ -15,11 +15,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketHandler extends TextWebSocketHandler {
 
     private static final ConcurrentHashMap<String, WebSocketSession> CLIENTS = new ConcurrentHashMap<>();
-    private static final String lastMessage = "";
+    private static volatile String lastMessage = "";
+    private static volatile boolean webSocketStatus = false;
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
+        lastMessage = payload;
         System.out.println("received = " + payload + " : " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
         CLIENTS.get(session.getId()).sendMessage(message);
     }
@@ -32,6 +34,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         System.out.println(session.getId() + " 연결 됨");
+        webSocketStatus = true;
         CLIENTS.put(session.getId(), session);
     }
 
@@ -45,12 +48,23 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         System.out.println(session.getId() + " 연결 끊김");
+        webSocketStatus = false;
         CLIENTS.remove(session.getId());
     }
 
     public static String getLastMessage() {
         System.out.println("CLIENTS = " + CLIENTS);
         System.out.println("lastMessage = " + lastMessage);
+
+        // total epoch:recent epoch:time
+        String[] response = lastMessage.split(":");
+
+
         return lastMessage;
+    }
+
+    public static boolean getWebSocketStatus() {
+        System.out.println("webSocketStatus = " + webSocketStatus);
+        return webSocketStatus;
     }
 }

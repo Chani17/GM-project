@@ -17,4 +17,6 @@ public interface MemberService {
     String checkMemberStatus(String email);
 
     String progressStatus(String email);
+
+    boolean updateMemberStatus(String email);
 }

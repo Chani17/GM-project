@@ -2,18 +2,14 @@ package inu.swcontest.gm.service.serviceImpl;
 
 import inu.swcontest.gm.controller.WebSocketHandler;
 import inu.swcontest.gm.entity.Member;
+import inu.swcontest.gm.entity.MemberStatus;
 import inu.swcontest.gm.model.AddMemberRequest;
-import inu.swcontest.gm.model.CheckMemberStatusRequest;
 import inu.swcontest.gm.model.LoginMemberRequest;
-import inu.swcontest.gm.model.ZipFileResponse;
 import inu.swcontest.gm.repository.MemberRepository;
 import inu.swcontest.gm.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.socket.WebSocketSession;
-
-import java.util.List;
 
 
 @Service
@@ -61,7 +57,21 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("회원이 존재하지 않습니다. 다시 로그인해주세요."));
 
+        if(!webSocketHandler.getWebSocketStatus()) {
+            return "closed";
+        }
+
         String lastMessage = webSocketHandler.getLastMessage();
+        System.out.println("lastMessage in service  = " + lastMessage);
         return lastMessage;
+    }
+
+    @Transactional
+    @Override
+    public boolean updateMemberStatus(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("회원이 존재하지 않습니다. 다시 로그인해주세요."));
+        member.updateMemberStatus(MemberStatus.generating);
+        return true;
     }
 }
