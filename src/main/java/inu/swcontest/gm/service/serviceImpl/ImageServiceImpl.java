@@ -44,9 +44,8 @@ public class ImageServiceImpl implements ImageService {
         Storage storage = StorageOptions.getDefaultInstance().getService();
 
             // GCS에 저장될 파일 이름 UUID로 지정
-            // 이미지 이름 foramt : gm-original-{originName}-{uuid}
-            String originName = zipFile.getOriginalFilename();
-            String name = "gm-original-" + originName + "-" + UUID.randomUUID();
+            // 이미지 이름 foramt : gm-original-{projectName}-{uuid}
+            String name = "gm-original-" + projectName + "-" + UUID.randomUUID();
 
             // 파일 확장자(형식) ex) PNG
             String contentType = zipFile.getContentType();

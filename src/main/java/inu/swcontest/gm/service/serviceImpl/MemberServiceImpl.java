@@ -61,9 +61,8 @@ public class MemberServiceImpl implements MemberService {
             return "closed";
         }
 
-        String lastMessage = webSocketHandler.getLastMessage();
-        System.out.println("lastMessage in service  = " + lastMessage);
-        return lastMessage;
+        String response = webSocketHandler.getLastMessage();
+        return response;
     }
 
     @Transactional

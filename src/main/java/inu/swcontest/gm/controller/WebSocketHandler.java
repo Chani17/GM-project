@@ -6,7 +6,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,10 +56,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
         System.out.println("lastMessage = " + lastMessage);
 
         // total epoch:recent epoch:time
-        String[] response = lastMessage.split(":");
+        String[] data = lastMessage.split(":");
 
+        int totalEpoch = Integer.parseInt(data[0]);
+        int recentEpoch = Integer.parseInt(data[1]);
+        int avgEpoch = totalEpoch / recentEpoch;
+        int elapsedTime = Integer.parseInt(data[2]);
+        int expectTime = elapsedTime * totalEpoch;
 
-        return lastMessage;
+        String response = totalEpoch + " " + recentEpoch + " " + avgEpoch + " " + elapsedTime + " " + expectTime;
+        return response;
     }
 
     public static boolean getWebSocketStatus() {
