@@ -5,6 +5,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import inu.swcontest.gm.entity.Member;
+import inu.swcontest.gm.entity.MemberStatus;
 import inu.swcontest.gm.entity.Zip;
 import inu.swcontest.gm.model.DashboardResponse;
 import inu.swcontest.gm.repository.MemberRepository;
@@ -13,6 +14,7 @@ import inu.swcontest.gm.service.ZipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -61,6 +63,7 @@ public class ZipServiceImpl implements ZipService {
     }
 
     // return image zip file from model server
+    @Transactional
     @Override
     public void returnZipFile(MultipartFile zipFile, List<Float> accuracy_generated, List<Float> accuracy_original_generated,
                               List<Float> LPIPS, List<Float> fid, MultipartFile loss,
@@ -68,6 +71,7 @@ public class ZipServiceImpl implements ZipService {
 
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다."));
+
 
         // upload file to GCS
         String url = saveFile(zipFile);
@@ -79,6 +83,9 @@ public class ZipServiceImpl implements ZipService {
 
         // save zipUrl to DB
         zipRepository.save(zip);
+
+        // change member status -> COMPLETE
+        member.updateMemberStatus(MemberStatus.complete);
 
     }
 

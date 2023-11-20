@@ -14,10 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketHandler extends TextWebSocketHandler {
 
     private static final ConcurrentHashMap<String, WebSocketSession> CLIENTS = new ConcurrentHashMap<>();
+    private static volatile String lastMessage = "";
+    private static volatile boolean webSocketStatus = false;
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        System.out.println("received = " + message.getPayload() + " : " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
+        String payload = message.getPayload();
+        lastMessage = payload;
+        System.out.println("received = " + payload + " : " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
         CLIENTS.get(session.getId()).sendMessage(message);
     }
 
@@ -29,6 +33,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         System.out.println(session.getId() + " 연결 됨");
+        webSocketStatus = true;
         CLIENTS.put(session.getId(), session);
     }
 
@@ -42,6 +47,29 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         System.out.println(session.getId() + " 연결 끊김");
+        webSocketStatus = false;
         CLIENTS.remove(session.getId());
+    }
+
+    public static String getLastMessage() {
+        System.out.println("CLIENTS = " + CLIENTS);
+        System.out.println("lastMessage = " + lastMessage);
+
+        // total epoch:recent epoch:time
+        String[] data = lastMessage.split(":");
+
+        int totalEpoch = Integer.parseInt(data[0]);
+        int recentEpoch = Integer.parseInt(data[1]);
+        int avgEpoch = totalEpoch / recentEpoch;
+        int elapsedTime = Integer.parseInt(data[2]);
+        int expectTime = elapsedTime * totalEpoch;
+
+        String response = totalEpoch + " " + recentEpoch + " " + avgEpoch + " " + elapsedTime + " " + expectTime;
+        return response;
+    }
+
+    public static boolean getWebSocketStatus() {
+        System.out.println("webSocketStatus = " + webSocketStatus);
+        return webSocketStatus;
     }
 }
