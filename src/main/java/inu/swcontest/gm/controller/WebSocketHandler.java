@@ -53,7 +53,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     public static String getLastMessage() {
         System.out.println("CLIENTS = " + CLIENTS);
-        System.out.println("lastMessage = " + lastMessage);
 
         // total epoch:recent epoch:time
         String[] data = lastMessage.split(":");
@@ -65,6 +64,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         int expectTime = elapsedTime * totalEpoch;
 
         String response = totalEpoch + " " + recentEpoch + " " + avgEpoch + " " + elapsedTime + " " + expectTime;
+        System.out.println("response = " + response);
         return response;
     }
 
