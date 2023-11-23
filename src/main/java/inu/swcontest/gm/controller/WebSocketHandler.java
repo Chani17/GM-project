@@ -21,7 +21,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
         lastMessage = payload;
-        System.out.println("received = " + payload + " : " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
         CLIENTS.get(session.getId()).sendMessage(message);
     }
 
@@ -52,24 +51,21 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     public static String getLastMessage() {
-        System.out.println("CLIENTS = " + CLIENTS);
 
         // total epoch:recent epoch:time
         String[] data = lastMessage.split(":");
 
         int totalEpoch = Integer.parseInt(data[0]);
         int recentEpoch = Integer.parseInt(data[1]);
-        double avgEpoch = ((double) recentEpoch / totalEpoch) * 100;
+        double avgEpoch = (double) recentEpoch / totalEpoch * 100;
         double elapsedTime = Double.parseDouble(data[2]);
         double expectTime = elapsedTime * totalEpoch;
 
-        String response = totalEpoch + " " + recentEpoch + " " + String.format("%.2f", avgEpoch) + " " + elapsedTime + " " + expectTime;
-        System.out.println("response = " + response);
+        String response = totalEpoch + " " + recentEpoch + " " + String.format("%.2f", avgEpoch) + " " + String.format("%.1f", elapsedTime) + " " + String.format("%.1f", expectTime);
         return response;
     }
 
     public static boolean getWebSocketStatus() {
-        System.out.println("webSocketStatus = " + webSocketStatus);
         return webSocketStatus;
     }
 }
