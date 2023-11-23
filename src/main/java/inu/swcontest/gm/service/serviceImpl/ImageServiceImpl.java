@@ -43,29 +43,29 @@ public class ImageServiceImpl implements ImageService {
         // GCP storage client 초기화
         Storage storage = StorageOptions.getDefaultInstance().getService();
 
-            // GCS에 저장될 파일 이름 UUID로 지정
-            // 이미지 이름 foramt : gm-original-{projectName}-{uuid}
-            String name = "gm-original-" + projectName + "-" + UUID.randomUUID();
+        // GCS에 저장될 파일 이름 UUID로 지정
+        // 이미지 이름 foramt : gm-original-{projectName}-{uuid}
+        String name = "gm-original-" + projectName + "-" + UUID.randomUUID();
 
-            // 파일 확장자(형식) ex) PNG
-            String contentType = zipFile.getContentType();
+        // 파일 확장자(형식) ex) PNG
+        String contentType = zipFile.getContentType();
 
-            // 이미지 정보 설정
-            try {
-                BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, name).setContentType(contentType).build();
+        // 이미지 정보 설정
+        try {
+            BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, name).setContentType(contentType).build();
 
-                // Cloud에 이미지 업로드
-                Blob uploadImage = storage.createFrom(blobInfo, zipFile.getInputStream());
+            // Cloud에 이미지 업로드
+            Blob uploadImage = storage.createFrom(blobInfo, zipFile.getInputStream());
 
-                // 해당 image url return
-                String zipUrl = uploadImage.getMediaLink();
+            // 해당 image url return
+            String zipUrl = uploadImage.getMediaLink();
 
-                // send zipFile to model server
-                sendZipFile(email, projectName, zipUrl);
+            // send zipFile to model server
+            sendZipFile(email, projectName, zipUrl);
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -89,8 +89,6 @@ public class ImageServiceImpl implements ImageService {
         restTemplate.postForObject(URL + "get/url", requestMessage, void.class);
 
     }
-
-
 
 
 }
