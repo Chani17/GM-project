@@ -1,0 +1,38 @@
+server:
+  port: 8001
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+
+  sql:
+    init:
+      mode: always
+
+
+  cloud:
+    gcp:
+      storage:
+        credentials:
+          location: ${STORAGE_CREDENTIALS}
+        project-id: ${PROJECT_ID}
+        bucket: ${BUCKET}
+
+
