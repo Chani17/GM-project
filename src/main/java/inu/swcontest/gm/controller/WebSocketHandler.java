@@ -59,11 +59,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         int totalEpoch = Integer.parseInt(data[0]);
         int recentEpoch = Integer.parseInt(data[1]);
-        int avgEpoch = totalEpoch / recentEpoch;
-        int elapsedTime = Integer.parseInt(data[2]);
-        int expectTime = elapsedTime * totalEpoch;
+        double avgEpoch = (double) recentEpoch / totalEpoch * 100;
+        double elapsedTime = Double.parseDouble(data[2]);
+        double expectTime = elapsedTime * totalEpoch;
 
-        String response = totalEpoch + " " + recentEpoch + " " + avgEpoch + " " + elapsedTime + " " + expectTime;
+        String response = totalEpoch + " " + recentEpoch + " " + String.format("%.2f", avgEpoch) + " " + String.format("%.1f", elapsedTime) + " " + String.format("%.1f", expectTime);
         System.out.println("response = " + response);
         return response;
     }

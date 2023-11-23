@@ -42,7 +42,7 @@ public class ZipServiceImpl implements ZipService {
         // GCS에 저장될 파일 이름 UUID로 지정
         // 이미지 이름 foramt : gm-new-{originName}-{uuid}
         String originName = zipFile.getOriginalFilename();
-        String name = "gm-new-" + originName + "-" + UUID.randomUUID();
+        String name = "gm-new-" + originName;
 
         // 파일 확장자(형식) ex) PNG
         String contentType = zipFile.getContentType();
