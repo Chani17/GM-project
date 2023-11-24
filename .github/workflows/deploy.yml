@@ -52,7 +52,7 @@ jobs:
       with:
         host: $ {{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        key: $ {{ secrets.PRIVATE_KEY }}
+        key: $ {{ secrets.PRIVATE_KEY | replace('\n', '\n') }}
         script: |
           sudo docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PASSWORD }}
           sudo docker pull ${{ secrets.DOCKER_ID }}/gm
