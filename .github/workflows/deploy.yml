@@ -50,9 +50,9 @@ jobs:
     - name: 6. Deploy to Instance
       uses: appleboy/ssh-action@v1.0.0
       with:
-        host: $ {{ secrets.HOST }}
+        host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        key: $ {{ secrets.PRIVATE_KEY | replace('\n', '\n') }}
+        key: ${{ secrets.PRIVATE_KEY }}
         script: |
           sudo docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PASSWORD }}
           sudo docker pull ${{ secrets.DOCKER_ID }}/gm
