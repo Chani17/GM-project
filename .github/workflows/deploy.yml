@@ -42,15 +42,15 @@ jobs:
         sudo apt-get update
         sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 
-    - name: 3. Grant Execute Permission For Gradlew & Build gradle
-      run: |
-        chmod +x gradlew
-        ./gradlew build -x test
-
-    - name: 4. Install Docker Compose
+    - name: 3. Install Docker Compose
       run: |
         sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
         sudo chmod +x /usr/local/bin/docker-compose
+        
+    - name: 4. Grant Execute Permission For Gradlew & Build gradle
+      run: |
+        chmod +x gradlew
+        ./gradlew build -x test
 
     - name: 5. Docker hub login
       uses: docker/login-action@v2
