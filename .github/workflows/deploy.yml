@@ -47,20 +47,25 @@ jobs:
         chmod +x gradlew
         ./gradlew build -x test
 
-    - name: 4. Docker hub login
+    - name: 4. Install Docker Compose
+      run: |
+        sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+
+    - name: 5. Docker hub login
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_ID }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: 5. Docker image build
+    - name: 6. Docker image build
       run: |
         docker build -t ${{ secrets.DOCKER_ID }}/gm .
 
-    - name: 6. Docker Hub push
+    - name: 7. Docker Hub push
       run: docker push ${{ secrets.DOCKER_ID }}/gm
         
-    - name: 7. Deploy to Instance
+    - name: 8. Deploy to Instance
       uses: appleboy/ssh-action@v1.0.0
       with:
         host: ${{ secrets.HOST }}
