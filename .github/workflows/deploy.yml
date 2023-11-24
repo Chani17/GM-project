@@ -42,7 +42,7 @@ jobs:
 
     - name: 4. Docker image build
       run: |
-        docker build -t ${{ secrets.DOCKER_ID }}/gm
+        docker build -t ${{ secrets.DOCKER_ID }}/gm .
 
     - name: 5. Docker Hub push
       run: docker push ${{ secrets.DOCKER_ID }}/gm
