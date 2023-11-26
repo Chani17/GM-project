@@ -1,0 +1,10 @@
+spring:
+  port: 8080
+
+  profiles:
+    default: prod
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
