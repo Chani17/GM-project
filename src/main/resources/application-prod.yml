@@ -1,6 +1,6 @@
 server:
   port: 8001
-  address: ${HOST}
+  address: "${HOST}"
 
 spring:
   config:
