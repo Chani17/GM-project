@@ -1,0 +1,44 @@
+name: githubaction-cd # "name" 태그는 자신이 원하는대로 작성해도 좋다.
+
+on:
+  push:
+    branches: [ "main" ] # "main" 브런치에 "push" 시 실행. (event)
+
+jobs:
+  cd:
+    name : gitaction-cd
+    runs-on: ubuntu-latest # github-action을 실행하기 위한 컴퓨터
+
+    steps:
+    - name : checkout
+      uses: actions/checkout@v3 # 레포지토리 최신 버전의 코드를 가져오는 라이브러리. 
+
+    - id : "auth"
+      name : Authenticate to GCP
+      uses : google-github-actions/auth@v0 # GCP인증을 위한 라이브러리.
+      with:
+        credentials_json: ${{ secrets.STORAGE_CREDENTIALS }} 
+    
+    - name : server-on
+      run : |-
+        gcloud compute ssh --project=${{ secrets.PROJECT_ID }} --zone=${{ secrets.GCP_ZONE }} ${{ secrets.USENAME }}@${{ secrets.GCP_INSTANCE_NAME }} -- \
+        "cd github-action && \
+        docker-compose stop && \
+        docker system prune -a && \
+        git pull && \
+        docker-compose -f docker-compose.prod.yaml build && \
+        docker-compose -f docker-compose.prod.yaml up -d
+        "
+
+     env:
+        BUCKET: ${{ secrets.BUCKET }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_URL: ${{ secrets.DB_URL }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        STORAGE_CREDENTIALS: ${{ secrets.STORAGE_CREDENTIALS }}
+        
+	// 위 run을 요약하면 다음과 같다.
+    // gcloud 를 통해 내가 가지고 있는 인스턴스에 ssh로 접속
+    // github-action 파일이동 후 
+    // docker 정지 / image 초기화 / 레포지토리 git pull / docker build & up
