@@ -27,9 +27,12 @@ jobs:
       with:
         files: ./src/main/resources/application-prod.yml 
       env:
-        spring.datasource.url: ${{ secrets.DB_URL }} 
-        spring.datasource.username: ${{ secrets.DB_USERNAME }} 
-        spring.datasource.password: ${{ secrets.DB_PASSWORD }} 
+        SPRING_DATASOURCE_URL: ${{ secrets.DB_URL }} 
+        SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }} 
+        SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        SPRING_CLOUD_GCP_STORAGE_CREDENTIALS_LOCATION: ${{ secrets.STORAGE_CREDENTIALS }}
+        SPRING_CLOUD_GCP_STORAGE_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+        SPRING_CLOUD_GCP_STORAGE_BUCKET: ${{ secrets.BUCKET }}
 
     - name: 3. Install Docker and Docker Compose
       run: |
@@ -78,10 +81,10 @@ jobs:
           sudo docker-compose up -d
           sudo docker run -d --name gm -p 8080:8001 gm
         
-      env:
-        BUCKET: ${{ secrets.BUCKET }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        DB_URL: ${{ secrets.DB_URL }}
-        DB_USERNAME: ${{ secrets.DB_USERNAME }}
-        PROJECT_ID: ${{ secrets.PROJECT_ID }}
-        STORAGE_CREDENTIALS: ${{ secrets.STORAGE_CREDENTIALS }}
+      # env:
+      #   BUCKET: ${{ secrets.BUCKET }}
+      #   DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      #   DB_URL: ${{ secrets.DB_URL }}
+      #   DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      #   PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      #   STORAGE_CREDENTIALS: ${{ secrets.STORAGE_CREDENTIALS }}
