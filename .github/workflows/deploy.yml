@@ -34,6 +34,12 @@ jobs:
         SPRING_CLOUD_GCP_STORAGE_PROJECT_ID: ${{ secrets.PROJECT_ID }}
         SPRING_CLOUD_GCP_STORAGE_BUCKET: ${{ secrets.BUCKET }}
 
+    - name: Debug - Show Environment Variables
+      run: printenv
+
+    - name: Debug - Show Yaml Content
+      run: cat ./src/main/resources/application-prod.yml
+
     - name: 3. Install Docker and Docker Compose
       run: |
         sudo apt-get update
