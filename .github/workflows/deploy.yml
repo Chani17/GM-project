@@ -33,6 +33,7 @@ jobs:
         # DB_USERNAME: ${{ secrets.DB_USERNAME }}
         # PROJECT_ID: ${{ secrets.PROJECT_ID }}
         # STORAGE_CREDENTIALS: ${{ secrets.STORAGE_CREDENTIALS }}
+        spring.server.address: ${{ secrets.HOST }}
         spring.datasource.hikari.jdbc-url: ${{ secrets.DB_URL }} 
         spring.datasource.hikari.username: ${{ secrets.DB_USERNAME }} 
         spring.datasource.hikari.password: ${{ secrets.DB_PASSWORD }}
