@@ -73,7 +73,7 @@ jobs:
         # This client-secret.json is converted by PRIVATE_KEY.
           gcloud auth activate-service-account ${{ secrets.USERNAME }} --key-file=${{ secrets.STORAGE_CREDENTIALS }}
           gcloud config set project ${{ secrets.PROJECT_ID }}
-          gcloud -q app deploy app.yaml --promote
+          gcloud -q app deploy deploy.yaml --promote
       env:
         BUCKET: ${{ secrets.BUCKET }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
