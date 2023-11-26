@@ -1,4 +1,4 @@
-name: githubaction-cd # "name" 태그는 자신이 원하는대로 작성해도 좋다.
+name: githubaction-cd 
 
 on:
   push:
