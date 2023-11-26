@@ -1,4 +1,4 @@
-name: GM Service CI/CD 
+name: GM Service CI/CD
 
 on:
   push:
