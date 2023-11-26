@@ -1,6 +1,5 @@
 server:
   port: 8001
-  address: 34.64.91.230
 
 spring:
   config:
