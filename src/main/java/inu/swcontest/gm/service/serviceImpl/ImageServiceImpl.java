@@ -32,7 +32,7 @@ public class ImageServiceImpl implements ImageService {
     private final MemberRepository memberRepository;
 
     // model server url
-    private static final String URL = "http://127.0.0.1:5000/";
+    private static final String URL = "http://35.216.126.130:5000/";
 
     @Override
     public void uploadImage(String email, String projectName, MultipartFile zipFile) {
