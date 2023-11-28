@@ -1,6 +1,7 @@
 package inu.swcontest.gm.controller;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -11,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@CrossOrigin(origins = "http://35.216.126.130:5000")
 public class WebSocketHandler extends TextWebSocketHandler {
 
     private static final ConcurrentHashMap<String, WebSocketSession> CLIENTS = new ConcurrentHashMap<>();
