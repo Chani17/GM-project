@@ -61,7 +61,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         int recentEpoch = Integer.parseInt(data[1]);
         double avgEpoch = (double) recentEpoch / totalEpoch * 100;
         double elapsedTime = Double.parseDouble(data[2]);
-        double expectTime = elapsedTime * totalEpoch;
+        double expectTime = elapsedTime * (totalEpoch - recentEpoch);
 
         String response = totalEpoch + " " + recentEpoch + " " + String.format("%.2f", avgEpoch) + " " + String.format("%.1f", elapsedTime) + " " + String.format("%.1f", expectTime);
         return response;
